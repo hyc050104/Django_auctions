@@ -1,0 +1,118 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div style=" width: 100%;display: flex;margin: 10px;">
+<div style="flex: 1;">
+{% if pick_listing.is_close %}
+<h2>{{pick_listing.title}}<span style="color: red;">(CLOSE)</span></h2>
+{% else %}
+<h2>{{pick_listing.title}}<span style="color: green;">(OPEN)</span></h2>
+{% endif %}
+</div>
+{% if is_follow %}
+<div style="flex: 1;text-align: right;">
+    <form method="post" action="{% url 'unfollow'%}">
+        {% csrf_token %}
+        <input type="hidden" value="{{pick_listing.id}}" name="id" id="hidden_id">
+        <input class="btn btn-primary" type="submit" value="unfollow">
+    </form>
+</div>
+{% else %}
+<div style="flex: 1;text-align: right;">
+    <form method="post" action="{% url 'follow'%}">
+        {% csrf_token %}
+        <input type="hidden" value="{{pick_listing.id}}" name="id" id="hidden_id">
+        <input class="btn btn-primary" type="submit" value="follow">
+    </form>
+</div>
+{% endif %}
+</div>
+
+<div class="inline_listing">
+{% if pick_listing.image %}
+<div style="flex: 0 0 80%;;"><img src="{{ pick_listing.image.url }}" alt="{{ pick_listing }}"style="width:100%;"></div>
+{% endif %} 
+<div style="flex: 1;"><p class="description">{{pick_listing.description}}</p></div>
+</div>
+
+{% if pick_listing.highest_bidding.exists %}
+<h3 style="color: red;text-align: center;">highest_bidding: ${{pick_listing.highest_bidding.get.price}}</h3>
+{% if pick_listing.is_close %}
+<h4 style="text-align: center;font-weight: bold;">[{{pick_listing.buyer}} won this listing.]</h4>
+{% endif %}
+{% else %}
+<h3 style="color: red;text-align: center;">start_bidding: ${{pick_listing.start_bidding}}</h3>
+{% endif %}
+<hr>
+
+<h4 style="color: green;text-align: center;">Bid_history</h4>
+{% for bidding in biddings %}
+<P class="bidding1">{{bidding}}<span style="color: gray;font-size: 12px">{{bidding.datetime}}</span></P>
+{% empty %}
+<P class="bidding1">NONE</P>
+{% endfor %}
+    {% if pick_listing.is_close %}
+{% if request.user == pick_listing.owner%}
+<div style="text-align: center;">
+<form method="post" action="{% url 'open'%}">
+{% csrf_token %}
+<input type="hidden" value="{{pick_listing.id}}" name="id" id="hidden_id">
+<input class="btn btn-primary" type="submit" value="open">
+</form>
+</div>
+{% endif %}
+    {% else %}
+<div style="text-align: center;">
+{% if request.user == pick_listing.owner%}
+<form method="post" action="{% url 'close'%}">
+{% csrf_token %}
+<input type="hidden" value="{{pick_listing.id}}" name="id" id="hidden_id">
+<input class="btn btn-primary" type="submit" value="close">
+</form>
+{% else %}
+<form method="post" action="{% url 'bid' %}">
+    {% csrf_token %}
+    <input type="hidden" value="{{pick_listing.id}}" name="id" id="hidden_id">
+    <div class="form-group">
+        {{bid_form}}
+    </div>
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+    <input class="btn btn-primary" type="submit" value="bid">
+</form>
+{% endif %}
+</div>
+    {% endif %}
+<hr>
+
+<h4 style="color: blue;text-align: center;">Comments</h4>
+{% for comment in comments %}
+<P class="comments1">{{comment}}<span style="color: gray;font-size: 12px">{{comment.datetime}}</span></P>
+{% empty %}
+<P class="comments1">NONE</P>
+{% endfor %}
+<div style="text-align: center;">
+    <form method="post" action="{% url 'comment' %}" name="id">
+        {% csrf_token %}
+        <input type="hidden" value="{{pick_listing.id}}" name="id" id="hidden_id">
+        <div class="form-group">
+            {{comment_form}}
+        </div>
+        <input class="btn btn-primary" type="submit" value="comment">
+    </form>
+</div>
+<hr>
+
+<h5 style="text-align: center;">Details</h5>
+<ul>
+    <li>Listed by: {{pick_listing.owner}}</li>
+    {% if pick_listing.category.exists %}
+    <li>Category: {{pick_listing.category.get.category}}</li>
+    {% else %}
+    <li>Category: NONE</li>
+    {% endif %}
+    <li>Create_time: {{pick_listing.datetime}}</li>
+    <li>Followers: {{pick_listing.follower.all.count}}</li>
+</ul>
+{% endblock %}

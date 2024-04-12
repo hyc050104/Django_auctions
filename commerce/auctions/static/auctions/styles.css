@@ -1,0 +1,49 @@
+body {
+    padding: 10px;
+}
+
+.inline_listing {
+    border: 1px solid gray;
+    width: 100%;
+    display: flex;
+    margin: 10px;
+}
+
+.title {
+    color: black;
+    font-size: 28px;
+    font-weight: bold;
+    margin: 20px;
+}
+
+
+.price {
+    color: black;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 20px;
+}
+
+.description {
+    color: black;
+    font-size: 18px;
+    margin: 20px;
+}
+
+.datetime {
+    color: gray;
+    font-size: 12px;
+    margin: 20px;
+}
+
+.bidding1 {
+    color: green;
+    font-size: 16px;
+    margin: 10px;
+}
+
+.comments1 {
+    color: blue;
+    font-size: 16px;
+    margin: 10px;
+}

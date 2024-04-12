@@ -1,0 +1,24 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{category}}</h2>
+    {% for listing in listings %}
+    <div class="inline_listing" >
+        {% if listing.image %}
+        <div style="flex: 1;"><img src="{{ listing.image.url }}" alt="{{ listing }}"style="width:100%;"></div>
+        {% endif %}     
+        <div style="flex: 1;">
+            <a href="{% url 'listings' listing.id %}">  
+{% if listing.is_close %}
+<p class="title">{{listing.title}}<span style="color: red;">■</span></p>
+{% else %}
+<p class="title">{{listing.title}}<span style="color: green;">■</span></p>
+{% endif %}
+            <p class="price">Start_bidding:$${{listing.start_bidding}}</p>
+            <p class="description">{{listing.description}}</p>
+            <p class="datetime">{{listing.datetime}}</p>
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}
